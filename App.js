@@ -3,6 +3,7 @@ import Animated, {
   withTiming,
   useAnimatedStyle,
   Easing,
+  useDerivedValue,
 } from 'react-native-reanimated';
 import {View, Button, StyleSheet} from 'react-native';
 import React from 'react';
@@ -11,6 +12,9 @@ const ACTIVE_COLOR = 'blue';
 const INACTIVE_COLOR = 'red';
 export default function AnimatedStyleUpdateExample(props) {
   const active = useSharedValue(false);
+  const color = useDerivedValue(() =>
+    active.value ? ACTIVE_COLOR : INACTIVE_COLOR,
+  );
 
   const config = {
     duration: 500,
@@ -25,7 +29,13 @@ export default function AnimatedStyleUpdateExample(props) {
 
   const imageStyles = useAnimatedStyle(() => {
     return {
-      tintColor: active.value ? ACTIVE_COLOR : INACTIVE_COLOR,
+      tintColor: color.value,
+    };
+  });
+
+  const textStyles = useAnimatedStyle(() => {
+    return {
+      color: color.value,
     };
   });
 
@@ -42,6 +52,7 @@ export default function AnimatedStyleUpdateExample(props) {
         source={require('./menu.png')}
         style={[styles.image, imageStyles]}
       />
+      <Animated.Text style={[styles.text, textStyles]}>Some Text</Animated.Text>
     </View>
   );
 }
@@ -49,5 +60,6 @@ export default function AnimatedStyleUpdateExample(props) {
 const styles = StyleSheet.create({
   container: {flex: 1, flexDirection: 'column'},
   box: {width: 100, height: 80, backgroundColor: 'black', margin: 30},
-  image: {},
+  image: {tintColor: 'green'},
+  text: {fontSize: 25},
 });
